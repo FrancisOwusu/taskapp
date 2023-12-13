@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(
@@ -15,9 +15,10 @@ void main() {
 
 class CounterStorage {
   Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
+    // final directory = await getApplicationDocumentsDirectory();
 
-    return directory.path;
+    // return directory.path;
+    return "testpath";
   }
 
   Future<File> get _localFile async {

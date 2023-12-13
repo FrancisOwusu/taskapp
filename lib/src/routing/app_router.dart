@@ -7,8 +7,9 @@ import 'package:go_router/go_router.dart';
 // import 'package:itestapp/src/features/todos/domain/todo.dart';
 // import 'package:itestapp/src/features/todos/presentation/todos_screen.dart';
 // import 'package:itestapp/src/features/todos/sample.dart';
-import 'package:taskapp/src/feature/dashboard/presentation/dashboard_screen.dart';
-import 'package:taskapp/src/feature/user/presentation/signIn.dart';
+// import 'package:taskapp/src/feature/dashboard/presentation/dashboard_screen.dart';
+import 'package:taskapp/src/feature/account/presentation/sign_in.dart';
+import 'package:taskapp/src/feature/welcome/presentation/welcome.dart';
 // import 'package:itestapp/src/pages/register.dart';
 // import 'package:itestapp/src/pages/show.dart';
 import '/src/routing/not_found_screen.dart';
@@ -34,7 +35,8 @@ final GoRouter router = GoRouter(
       path: '/',
       name: AppRoute.dashoard.name,
       builder: (BuildContext context, GoRouterState state) {
-        return const DashboardScreen();
+        return const Welcome();
+        // return const DashboardScreen();
         // return const AlbumScreen();
         // return const ProductGrid();
         // , return const RetrieveDataScreen();
