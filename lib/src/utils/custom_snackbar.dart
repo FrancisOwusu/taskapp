@@ -8,10 +8,10 @@ class CustomSnackBar {
     return Get.snackbar(
       'Success',
       message,
-      icon: Icon(
+      icon: const Icon(
         Icons.check_circle,
         color: CustomColor.greenColor,
-        size: Dimensions.heightSize * 2.6,
+        // size: Dimensions.heightSize * 2.6,
       ),
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.black,
@@ -27,10 +27,10 @@ class CustomSnackBar {
     return Get.snackbar(
       'Alert',
       message,
-      icon: Icon(
+      icon: const Icon(
         Icons.error,
         color: CustomColor.redColor,
-        size: Dimensions.heightSize * 2.6,
+        // size: Dimensions.heightSize * 2.6,
       ),
       margin: EdgeInsets.all(Dimensions.marginSizeVertical * 0.5),
       snackPosition: SnackPosition.BOTTOM,

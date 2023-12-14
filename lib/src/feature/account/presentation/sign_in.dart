@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taskapp/src/utils/logger.dart';
+
+final log = logger(SignIn);
 
 // Define a custom Form widget.
 class SignIn extends StatefulWidget {
@@ -52,6 +55,7 @@ class MyFormFields extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Column(

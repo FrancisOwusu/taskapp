@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 // import 'package:itestapp/src/features/todos/sample.dart';
 // import 'package:taskapp/src/feature/dashboard/presentation/dashboard_screen.dart';
 import 'package:taskapp/src/feature/account/presentation/sign_in.dart';
+import 'package:taskapp/src/feature/account/presentation/sign_in_screen.dart';
 import 'package:taskapp/src/feature/welcome/presentation/welcome.dart';
 // import 'package:itestapp/src/pages/register.dart';
 // import 'package:itestapp/src/pages/show.dart';
@@ -49,7 +50,7 @@ final GoRouter router = GoRouter(
             pageBuilder: (context, state) {
               return CustomTransitionPage(
                   key: state.pageKey,
-                  child: const SignIn(),
+                  child: const SignInScreen(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     // Change the opacity of the screen using a Curve based on the the animation's
