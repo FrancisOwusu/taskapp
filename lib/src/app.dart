@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:taskapp/src/constants/app_config.dart';
+import 'package:taskapp/src/common/app_config.dart';
 import 'package:taskapp/src/routing/app_router.dart';
 
 class MyApp extends StatelessWidget {

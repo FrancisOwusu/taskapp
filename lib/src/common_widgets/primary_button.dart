@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taskapp/src/constants/app_sizes.dart';
+import 'package:taskapp/src/common/app_sizes.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton(

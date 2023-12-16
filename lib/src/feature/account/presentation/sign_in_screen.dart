@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taskapp/src/constants/app_config.dart';
+import 'package:taskapp/src/common/app_config.dart';
 import 'package:taskapp/src/feature/account/presentation/sign_in_form.dart';
 
 class SignInScreen extends StatelessWidget {

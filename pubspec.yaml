@@ -48,6 +48,14 @@ dependencies:
   get: ^4.6.6
   logger: ^2.0.2+1
   intl: any
+
+
+  #CONNECTIVITY
+  connectivity_plus: ^5.0.1
+  # url_launcher: ^6.2.1
+  # map_launcher: ^3.0.1
+  #STORAGE
+  get_storage: ^2.0.3
 flutter_localizations:
     sdk: flutter
 
