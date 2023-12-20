@@ -1,11 +1,16 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taskapp/src/feature/account/controller/account_controller.dart';
+import 'package:taskapp/src/feature/account/domain/auth_model.dart';
+import 'package:taskapp/src/feature/account/domain/register_model.dart';
+import 'package:taskapp/src/feature/account/presentation/sign_in_screen.dart';
+
+import 'package:taskapp/src/feature/account/service/account_service.dart';
+import 'package:taskapp/src/store/local_storage.dart';
 import 'package:taskapp/src/utils/logger.dart';
 import 'package:taskapp/src/utils/notification_util.dart';
 
-final log = logger(SignInForm);
+final log1 = logger(SignInForm);
 
 class SignInForm extends StatefulWidget {
   const SignInForm({super.key});
@@ -13,143 +18,171 @@ class SignInForm extends StatefulWidget {
   State<SignInForm> createState() => _SignInFormFields();
 }
 
+final log2 = logger(_SignInFormFields);
+
 class _SignInFormFields extends State<SignInForm> {
-  final _formKey = GlobalKey<FormState>();
-  RegExp get _emailRegex => RegExp(r'^\S+@\S+$');
-  AccountController _accountController = AccountController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  FocusNode emailFocus = FocusNode();
-  FocusNode passwordFocus = FocusNode();
-  Bool? isEmailAlreadyRegistered;
-  @override
-  void initState() {
-    super.initState();
-
-    // Start listening to changes.
-    // myController.addListener(_printLatestValue);
-  }
-
-  void init() {
-    // hideKeyboard(context);
-    // if (_formKey.currentState!.validate()) {
-    //   _formKey.currentState!.save();
-    //   Map req = {
-    //     'email': emailController.text.trim(),
-    //     'password': passwordController.text.trim(),
-    //   };
-    // }
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  String? get _errorText {
-    // at any time, we can get the text from _controller.value.text
-    final text = emailController.value.text;
-    // Note: you can do your own custom validation here
-    // Move this logic this outside the widget for more testable code
-    if (text.isEmpty) {
-      return 'Can\'t be empty';
-    }
-    if (text.length < 4) {
-      return 'Too short';
-    }
-    // return null if the text is valid
-    return null;
-  }
-
-  // of the TextField.
-  final myController = TextEditingController();
-
-  // void _printLatestValue() {
-  //   final text = myController.text;
-  //   print('Second text field: $text (${text.characters.length})');
-  // }
+  final controllerUsername = TextEditingController();
+  final controllerPassword = TextEditingController();
+  bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-        key: _formKey,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        // autovalidateMode: AutovalidateMode.always,
+    return Scaffold(
+        // appBar: AppBar(
+        //   title: const Text('Flutter Login/Logout'),
+        // ),
+        body: Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(8),
         child: Column(
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.always,
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your email',
-                  ),
-                  // validator: (String? value) {
-                  //   if (!_emailRegex.hasMatch(value!)) {
-                  //     return 'Email address is not valid';
-                  //   }
-                  //   if (value == null || value.isEmpty) {
-                  //     return 'Please enter email';
-                  //   }
-
-                  //   return null;
-                  // },
-                )),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextFormField(
-                // obscureText: passwordVisible,
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter password',
-                ),
-                // validator: (String? value) {
-                //   if (value == null || value.isEmpty) {
-                //     return 'Please enter password';
-                //   }
-                //   return null;
-                // },
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              height: 200,
+              child: Image.network(
+                  'http://blog.back4app.com/wp-content/uploads/2017/11/logo-b4a-1-768x175-1.png'),
+            ),
+            const Center(
+              child: Text('Flutter on Back4App',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            const Center(
+              child: Text('User Login/Logout', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            TextFormField(
+              controller: controllerUsername,
+              enabled: !isLoggedIn,
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.none,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  labelText: 'Username'),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            TextFormField(
+              controller: controllerPassword,
+              enabled: !isLoggedIn,
+              obscureText: true,
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.none,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  labelText: 'Password'),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            SizedBox(
+              height: 50,
+              child: TextButton(
+                onPressed: isLoggedIn ? null : () => doUserLogin(),
+                child: const Text('Login'),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              child: ElevatedButton(
-                onPressed: _postForm,
-                child: const Text('submit'),
+            const SizedBox(
+              height: 16,
+            ),
+            SizedBox(
+              height: 50,
+              child: TextButton(
+                onPressed: !isLoggedIn ? null : () => doUserLogout(),
+                child: const Text('Logout'),
               ),
             )
           ],
-        ));
+        ),
+      ),
+    ));
   }
 
-  void _postForm() {
-    // Validate returns true if the form is valid, or false otherwise.
+  void showSuccess(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Success!"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-    if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> inputBody = {
-        'email': emailController.text,
-        'password': passwordController.text
-      };
-      // log.i(emailController.text);
-      // log.i(passwordController.text);
-      NotificationUtil.snackBarError(message: "essssss");
-      AccountController.signUp(body: inputBody);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('snack'),
-        duration: const Duration(seconds: 1),
-        action: SnackBarAction(
-          label: 'ACTION',
-          onPressed: () {},
-        ),
-      ));
+  void showError(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error!"),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void doUserLogin() async {
+    final username = controllerUsername.text.trim();
+    final password = controllerPassword.text.trim();
+    // Map<String, dynamic> req = {'email': username, 'password': password};
+    late AuthModel authModel;
+    await AccountService.loginApi(
+        body: {'email': username, 'password': password}).then((value) {
+      authModel = value!;
+      if (authModel.token.isNotEmpty || authModel.token != '') {
+        isLoggedIn = true;
+        String? token = authModel.token;
+        LocalStorage.saveToken(token: token.toString());
+        LocalStorage.isLoginSuccess(isLoggedIn: true);
+        LocalStorage.isLoggedIn();
+        log2.e(token);
+        showSuccess("User was successfully login!");
+        setState(() {
+          isLoggedIn = true;
+        });
+        context.go('/dashboard');
+      } else {
+        showError("Unable to log user in,contact admin");
+      }
+    }).catchError((onError) {
+      log2.e(onError);
+    });
+  }
+
+  void doUserLogout() async {
+    AccountService.signOut();
+
+    if (isLoggedIn) {
+      showSuccess("Logout Successful");
+      // context.of;
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const SignInScreen()));
     }
   }
 }

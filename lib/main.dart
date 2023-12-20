@@ -9,6 +9,7 @@ void main() {
   //Todo: Await Native Splash
   //Tod: Initialize Firebase
   //Todo: Initialize Authentication
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

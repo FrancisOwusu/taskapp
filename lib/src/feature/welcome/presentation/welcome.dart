@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:taskapp/src/feature/account/presentation/sign_in_screen.dart';
-import 'package:taskapp/src/feature/dashboard/presentation/dashboard_screen.dart';
-import 'package:taskapp/src/feature/account/presentation/sign_in.dart';
+// import 'package:taskapp/src/feature/dashboard/presentation/dashboard_screen.dart';
 
 // enum PageTransitionType {
 //   fade,

@@ -1,111 +1,26 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taskapp/src/feature/account/domain/auth_model.dart';
 import 'package:taskapp/src/feature/account/domain/register_model.dart';
-import 'package:taskapp/src/utils/api_methods.dart';
-import 'package:taskapp/src/utils/api_util.dart';
+import 'package:taskapp/src/feature/account/service/account_service.dart';
+import 'package:taskapp/src/store/local_storage.dart';
+
 import 'package:taskapp/src/utils/logger.dart';
 import 'package:taskapp/src/utils/notification_util.dart';
 
 final log = logger(AccountController);
 
-class AccountController {
-  bool _isLoading = false;
-  // Future<AuthModel> logInApi(Map request, {bool isSocialLogin = false}) async {
-  // Response response = await buildHttpResponse(
-  //     isSocialLogin ? 'social-login' : 'login',
-  //     request: request,
-  //     method: HttpMethod.POST);
+class AccountController extends GetxController {
+  AccountController({required this.isBasic});
 
-  // if (!(response.statusCode >= 200 && response.statusCode <= 206)) {
-  //   if (response.body.isJson()) {
-  //     var json = jsonDecode(response.body);
+  bool isBasic; //!loading api
 
-  //     if (json.containsKey('code') &&
-  //         json['code'].toString().contains('invalid_username')) {
-  //       throw 'invalid_username';
-  //     }
-  //   }
-  // }
-  // }
-  static Future<RegisterModel?> signUp(
-      {required Map<String, dynamic> body}) async {
-    Map<String, dynamic>? mapResponse;
-    try {
-      mapResponse = await ApiMethod(isBasic: true).post(
-        ApiUtil.registrationUrl,
-        body,
-        code: 200,
-      );
-      if (mapResponse != null) {
-        RegisterModel loginModel = RegisterModel.fromJson(mapResponse);
-        return loginModel;
-      }
-    } catch (e) {
-      log.e(
-          '🐞🐞🐞jjjj err from login api service ==> ${e.runtimeType}. 🐞🐞🐞');
-      // NotificationUtil.snackBarError(
-      //     message: 'Something went Wrong! in LoginModel');
-      return null;
-    }
-    return null;
-  }
-
-//!Login Api method
-  static Future<AuthModel?> loginApi(
-      {required Map<String, dynamic> body}) async {
-    Map<String, dynamic>? mapResponse;
-    try {
-      mapResponse = await ApiMethod(isBasic: true).post(
-        ApiUtil.loginUrl,
-        body,
-        code: 200,
-      );
-      if (mapResponse != null) {
-        log.i(mapResponse);
-        AuthModel loginModel = AuthModel.fromJson(mapResponse);
-        return loginModel;
-      }
-    } catch (e) {
-      log.e('🐞🐞🐞 err from login api service ==> $e 🐞🐞🐞');
-      NotificationUtil.snackBarError(
-          message: 'Something went Wrong! in LoginModel');
-      return null;
-    }
-    return null;
-  }
-
-  //!Logout Api method
-  // static Future<CommonSuccessModel?> logOut() async {
+  // Login process function
+  // static Future<AuthModel> loginProcess(
+  //     {required Map<String, dynamic> body}) async {
   //   Map<String, dynamic>? mapResponse;
-  //   try {
-  //     mapResponse = await ApiMethod(isBasic: false).get(
-  //       ApiEndpoint.logOutURL,
-  //       code: 200,
-  //     );
-  //     if (mapResponse != null) {
-  //       CommonSuccessModel logOutModel =
-  //           CommonSuccessModel.fromJson(mapResponse);
-  //       return logOutModel;
-  //     }
-  //   } catch (e) {
-  //     log.e('🐞🐞🐞 err from log out api service ==> $e 🐞🐞🐞');
-  //     CustomSnackBar.error('Something went Wrong! in logout model');
-  //     return null;
-  //   }
-  //   return null;
-  // }
-
-// Login process function
-  // Future<AuthModel> loginProcess() async {
-  //   _isLoading.value = true;
-  //   update();
-
-  //   Map<String, dynamic> inputBody = {
-  //     'email': emailController.text,
-  //     'password': passwordController.text,
-  //   };
   //   // calling login api from api service
-  //   await ApiServices.loginApi(body: inputBody).then((value) {
+  //   await AccountService.signUp(body).then((value) {
   //     _loginModel = value!;
 
   //     debugPrint("Email Verified => Login Process");
@@ -147,4 +62,28 @@ class AccountController {
   //   update();
   //   return _loginModel;
   // }
+
+  static Future<RegisterModel> signUpProcess(Map<String, dynamic> body) async {
+    //!loading api
+    late RegisterModel _registerModel;
+
+    await AccountService.signUp(body).then((value) {
+      _registerModel = value!;
+      if (_registerModel.token.isNotEmpty || _registerModel.token != '') {
+        String? token = _registerModel.token;
+        LocalStorage.saveToken(token: token.toString());
+        LocalStorage.isLoginSuccess(
+          isLoggedIn: true,
+        );
+        LocalStorage.isLoggedIn();
+        return _registerModel;
+      }
+    }).catchError((onError) {
+      log.e(onError);
+    });
+    return _registerModel;
+    // _isLoading.value = false;
+    // update();
+    // return log.i(_loginModel);
+  }
 }

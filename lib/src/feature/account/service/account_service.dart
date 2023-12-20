@@ -1,49 +1,61 @@
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskapp/src/feature/account/domain/auth_model.dart';
+import 'package:taskapp/src/feature/account/domain/register_model.dart';
+import 'package:taskapp/src/store/local_storage.dart';
+import 'package:taskapp/src/utils/api_methods.dart';
 import 'package:taskapp/src/utils/api_util.dart';
-// import 'package:taskapp/src/feature/account/domain/auth_model.dart';
-import 'package:dio/dio.dart';
 import 'package:taskapp/src/utils/logger.dart';
 
 final log = logger(AccountService);
 
 class AccountService {
-//get token
-  Future<dynamic> getToken(String email, String password) async {
+  AccountService({required this.isBasic});
+
+  bool isBasic;
+  static Future<RegisterModel?> signUp(Map<String, dynamic> body) async {
+    Map<String, dynamic>? mapResponse;
     try {
-      var response = await Dio().post(ApiEndpoint.loginUrl,
-          data: {'email': email, 'password': password});
-      log.i(response);
-      if (kDebugMode) {
-        print(response);
+      mapResponse = await ApiMethod(isBasic: true).post(
+        ApiUtil.registrationUrl,
+        body,
+        code: 200,
+      );
+      if (mapResponse != null) {
+        RegisterModel loginModel = RegisterModel.fromJson(mapResponse);
+        return loginModel;
       }
-      if (response.statusCode == 200 && response.data != '') {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', response.data);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return error;
+    } catch (e) {
+      log.e(
+          '🐞🐞🐞jjjj err from login api service ==> ${e.runtimeType}. 🐞🐞🐞');
+
+      return null;
     }
+    return null;
   }
 
-  Future<dynamic> registerUser(
-      String username, String email, String password) async {
+//!Login Api method
+  static Future<AuthModel?> loginApi(
+      {required Map<String, dynamic> body}) async {
+    Map<String, dynamic>? mapResponse;
     try {
-      var user = await Dio().post(ApiEndpoint.registrationUrl,
-          data: {'email': email, 'password': password});
-      if (kDebugMode) {
-        print(user);
+      mapResponse = await ApiMethod(isBasic: true).post(
+        ApiUtil.loginUrl,
+        body,
+        code: 200,
+      );
+      if (mapResponse != null) {
+        log.i(mapResponse);
+        AuthModel loginModel = AuthModel.fromJson(mapResponse);
+        return loginModel;
       }
-      if (user.statusCode == 201 && user.data != '') {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return error;
+    } catch (e) {
+      log.e('🐞🐞🐞 err from login api service ==> $e 🐞🐞🐞');
+      return null;
     }
+    return null;
+  }
+
+  static void signOut() {
+    LocalStorage.logout();
+    LocalStorage.isLoggedIn();
   }
 }

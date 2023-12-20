@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskapp/src/store/local_storage.dart';
 
 // Define a custom Form widget.
 class DashboardScreen extends StatefulWidget {
@@ -133,5 +134,9 @@ class MyFormFields extends StatelessWidget {
         )
       ],
     );
+  }
+
+  void _logout() {
+    LocalStorage.logout();
   }
 }

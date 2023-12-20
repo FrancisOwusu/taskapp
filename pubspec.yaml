@@ -56,6 +56,8 @@ dependencies:
   # map_launcher: ^3.0.1
   #STORAGE
   get_storage: ^2.0.3
+  # #TOAST
+  # fluttertoast: ^8.2.4
 flutter_localizations:
     sdk: flutter
 

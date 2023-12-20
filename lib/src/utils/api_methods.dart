@@ -1,10 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:taskapp/src/common/error_message_model.dart';
+import 'package:taskapp/src/feature/account/domain/auth_model.dart';
 import 'package:taskapp/src/store/local_storage.dart';
+import 'package:taskapp/src/utils/api_util.dart';
 import 'package:taskapp/src/utils/notification_util.dart';
 
 enum HttpMethod { GET, POST, DELETE, PUT }
@@ -34,11 +40,11 @@ Future<Map<String, String>> bearerHeaderInfo() async {
   };
 }
 
-class ApiMethod {
+class ApiMethod extends GetxController {
   ApiMethod({required this.isBasic});
 
   bool isBasic;
-
+  late BuildContext context;
   // Get method
   Future<Map<String, dynamic>?> get(
     String url, {
@@ -385,5 +391,20 @@ class ApiMethod {
 
       return null;
     }
+  }
+
+  //!Logout Api method
+  static String? logOut() {
+    try {
+      var mapResponse = LocalStorage.logout();
+      if (mapResponse != null) {
+        return "Logout Successfully";
+      }
+    } catch (e) {
+      log.e('🐞🐞🐞 err from log out api service ==> $e 🐞🐞🐞');
+      // CustomSnackBar.error('Something went Wrong! in logout model');
+      return null;
+    }
+    return null;
   }
 }
